@@ -4,20 +4,22 @@ use Livewire\Component;
 use App\Livewire\Forms\Posts\CreatePostForm;
 use Livewire\WithFileUploads;
 
-new class extends Component
-{
+new class extends Component {
     use WithFileUploads;
     public CreatePostForm $cform;
 
-    public function store(){
+    public function store()
+    {
         $this->cform->createPostForm();
+        // $this->dispatch('mensaje', 'Se ha guardado el Post');
+        session()->flash('mensaje', 'Se ha guardado el Post');
         $this->cancelar();
     }
-    public function cancelar(){
+    public function cancelar()
+    {
         $this->cform->resetForm();
         return redirect()->route('posts.show');
     }
-
 };
 ?>
 
@@ -34,7 +36,7 @@ new class extends Component
         <trix-editor x-ref="trix" input="mi_contenido" class="min-h-96"></trix-editor>
     </div>
     @error('cform.contenido')
-        <div class="mt-1 text-sm text-red-500 font-medium">{{$message}}</div>
+        <div class="mt-1 text-sm text-red-500 font-medium">{{ $message }}</div>
     @enderror
     <!-- Categoria -->
     <flux:radio.group wire:model="cform.categoria" label="Categoría" variant="cards" class="w-96">
@@ -48,18 +50,20 @@ new class extends Component
         <flux:radio value="Borrador" label="Borrador" />
     </flux:radio.group>
     <!-- Imagen -->
-     <flux:label class="mt-4">Imagen</flux:label>
+    <flux:label class="mt-4">Imagen</flux:label>
     <div class="mt-4 w-full h-96 relative rounded-lg bg-gray-200">
         <input type="file" accept="image/*" wire:model="cform.imagen" class="hidden" id="cimagen" />
-        <label class="flex items-center absolute bottom-2 right-2 p-2 rounded-xl bg-gray-600 hover:bg-gray-800 text-white font-semibold" for="cimagen">
+        <label
+            class="flex items-center absolute bottom-2 right-2 p-2 rounded-xl bg-gray-600 hover:bg-gray-800 text-white font-semibold"
+            for="cimagen">
             <x-heroicon-o-photo class="w-5 h-5 mr-2" /><span>SUBIR</span>
         </label>
-        @if($cform->imagen)
-        <img src="{{$cform->imagen->temporaryUrl()}}" class="h-full w-auto object-contain mx-auto" />
+        @if ($cform->imagen)
+            <img src="{{ $cform->imagen->temporaryUrl() }}" class="h-full w-auto object-contain mx-auto" />
         @endif
     </div>
     @error('cform.imagen')
-        <div class="mt-1 text-sm text-red-500 font-medium">{{$message}}</div>
+        <div class="mt-1 text-sm text-red-500 font-medium">{{ $message }}</div>
     @enderror
     <!-- Botones -->
     <div class="mt-4 w-full flex flex-row-reverse gap-2">

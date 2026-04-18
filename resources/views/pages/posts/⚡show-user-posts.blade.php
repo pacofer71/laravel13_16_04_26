@@ -5,12 +5,14 @@ use Livewire\WithPagination;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Stevebauman\Purify\Facades\Purify;
+use Livewire\Attributes\On;
 
 new class extends Component {
     use WithPagination;
     public string $buscar = '';
     public string $campo = 'id';
     public string $orden = 'desc';
+    public ?Post $post=null;
 
     public function ordenar(string $campo)
     {
@@ -40,9 +42,22 @@ new class extends Component {
         $this->authorize('update', $post);
         return redirect()->route('posts.edit', $post);
     }
-    public function borrar(Post $post){
+    public function confirmarBorrar(Post $post){
         $this->authorize('delete', $post);
-        $post->delete();
+        $this->post=$post;
+        //dd($post);
+        $this->dispatch('evtBorrar');
+    }
+
+    #[On('evtBorrarOk')]
+    public function borrar(){
+        //$this->authorize('delete', $post);
+        $this->post->delete();
+    }
+    public function cambiarEstado(Post $post){
+        $this->authorize('update', $post);
+        $estado=$post->estado=='Publicado' ? 'Borrador' : 'Publicado';
+        $post->update(compact('estado'));
     }
 };
 ?>
@@ -57,7 +72,7 @@ new class extends Component {
         <div class="w-1/2">
             <flux:input icon="magnifying-glass" wire:model.live="buscar" />
         </div>
-        <a href="" class="font-semibold inline-flex items-center gap-1 p-2 bg-gray-600 hover:bg-gray-800 text-white rounded-lg whitespace-nowrap">
+        <a href="{{route('posts.create')}}" class="font-semibold inline-flex items-center gap-1 p-2 bg-gray-600 hover:bg-gray-800 text-white rounded-lg whitespace-nowrap">
             <x-heroicon-o-plus class="w-4 h-4" />
             NUEVO
         </a>
@@ -146,7 +161,7 @@ new class extends Component {
                         </td>
 
                         <!-- Estado -->
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 cursor-pointer" wire:click="cambiarEstado({{$post}})">
                             <span @class([
                                 'inline-flex items-center px-2.5 py-1 rounded-full text-xs',
                                 'bg-green-100 text-green-700' => $post->estado == 'Publicado',
@@ -179,7 +194,7 @@ new class extends Component {
                                 </button>
 
                                 <!-- Eliminar -->
-                                <button wire:click="borrar({{ $post }})" wire:confirm="¿Seguro que quieres eliminar este post?"
+                                <button wire:click="confirmarBorrar({{ $post }})"
                                     class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition">
                                     <x-heroicon-o-trash class="w-4 h-4" />
                                 </button>

@@ -3,7 +3,11 @@
 
 <head>
     @include('partials.head')
+    @livewireStyles
+    <!-- Cdn trix -->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
+    <!-- Cdn sweetalert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
 </head>
 
@@ -33,8 +37,6 @@
         </flux:sidebar.nav>
 
         <flux:spacer />
-
-
 
         <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
     </flux:sidebar>
@@ -86,6 +88,34 @@
     {{ $slot }}
 
     @fluxScripts
+    @livewireScripts
+    <script>
+        Livewire.on('evtBorrar', () => {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('evtBorrarOk');
+                };
+            });
+        });
+    </script>
+    @if (session('mensaje'))
+        <script>
+            Swal.fire({
+                icon: "success",
+                title: "{{session('mensaje')}}",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        </script>
+    @endif
 </body>
 
 </html>

@@ -36,7 +36,7 @@ class PostObserver
      */
     public function deleted(Post $post): void
     {
-        if(basename($post->imagen)!='default.jpg'){
+        if(basename($post->imagen)!='noimage.jpg'){
             Storage::delete($post->imagen);
         }
     }

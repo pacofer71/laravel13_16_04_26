@@ -67,7 +67,7 @@ new class extends Component {
     @enderror
     <!-- Botones -->
     <div class="mt-4 w-full flex flex-row-reverse gap-2">
-        <flux:button icon="paper-airplane" variant="primary" wire:click="store">ENVIAR</flux:button>
+        <flux:button icon="paper-airplane" variant="primary" wire:click="store" wire:loading.attr="disabled">ENVIAR</flux:button>
         <flux:button icon="x-mark" variant="danger" wire:click="cancelar">CANCELAR</flux:button>
     </div>
 

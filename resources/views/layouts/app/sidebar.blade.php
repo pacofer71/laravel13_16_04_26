@@ -34,6 +34,10 @@
                     {{ __('Crear Post') }}
                 </flux:sidebar.item>
             </flux:sidebar.group>
+            <flux:sidebar.item icon="cog-6-tooth" :href="route('posts.show1')"
+                    :current="request()->routeIs('show.posts1')" wire:navigate>
+                    {{ __('Gestionar Posts Modal') }}
+            </flux:sidebar.item>
         </flux:sidebar.nav>
 
         <flux:spacer />
@@ -103,6 +107,14 @@
                 if (result.isConfirmed) {
                     Livewire.dispatch('evtBorrarOk');
                 };
+            });
+        });
+        Livewire.on('mensaje', txt=>{
+            Swal.fire({
+                icon: "success",
+                title: txt,
+                showConfirmButton: false,
+                timer: 1500
             });
         });
     </script>
